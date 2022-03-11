@@ -3,12 +3,11 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
-using System.Threading;
-
-
+using System.Collections.Generic;
 
 namespace Robot
 {
+
     public partial class Form1 : Form
     {
         [DllImport("kernel32.dll")]
@@ -16,9 +15,12 @@ namespace Robot
         public Form1()
         {
             InitializeComponent();
+            ShtDown();
         }
-
-
+        [DllImport("user32", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
+        public static extern short GetAsyncKeyState(Keys vKey);
+        [DllImport("user32", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
+        private static extern int GetAsyncKeyState(long vKey);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT
@@ -33,11 +35,6 @@ namespace Robot
         }
         [DllImport("user32.dll")]
         public static extern bool GetCursorPos(out POINT lpPoint);
-        void durdurma(object sender, KeyEventArgs e)
-        {
-            durdur = true;
-            timer1.Stop();
-        }
         public static Point GetCursorPosition()
         {
             POINT lpPoint;
@@ -109,7 +106,7 @@ namespace Robot
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            if (durdur) { } else { durdur = false; timer1.Start(); BtnBaslat.Enabled = false; BtnIptal.Enabled = true; }
+            if (durdur) { } else { durdur = false; timer1.Start(); BtnBaslat.Enabled = false; BtnIptal.Enabled = true; goster_gizle(); }
         }
         Color renk1, renk2, renk3, renk4;
         Color renk11, renk22, renk33, renk44;
@@ -131,8 +128,8 @@ namespace Robot
                 BtnKordinat.Enabled = false;
                 BtnTiklama.Enabled = false;
             }
-            
-            SetThreadExecutionState(0x80000043);           
+
+            SetThreadExecutionState(0x80000043);
         }
 
         private void yukle()
@@ -150,9 +147,9 @@ namespace Robot
             r2.BackColor = Properties.Settings.Default.r2;
             renk22 = Properties.Settings.Default.r2;
             r3.BackColor = Properties.Settings.Default.r3;
-            renk33= Properties.Settings.Default.r3;
+            renk33 = Properties.Settings.Default.r3;
             r4.BackColor = Properties.Settings.Default.r4;
-            renk44= Properties.Settings.Default.r4;
+            renk44 = Properties.Settings.Default.r4;
             tx1.Text = Properties.Settings.Default.tx1;
             tx2.Text = Properties.Settings.Default.tx2;
             tx3.Text = Properties.Settings.Default.tx3;
@@ -161,8 +158,8 @@ namespace Robot
             ty2.Text = Properties.Settings.Default.ty2;
             ty3.Text = Properties.Settings.Default.ty3;
             ty4.Text = Properties.Settings.Default.ty4;
-            trackBar1.Value =Convert.ToInt32(Properties.Settings.Default.hiz);
-            label1.Text=trackBar1.Value.ToString();
+            trackBar1.Value = Convert.ToInt32(Properties.Settings.Default.hiz);
+            label1.Text = trackBar1.Value.ToString();
         }
 
         /// <summary>
@@ -218,7 +215,16 @@ namespace Robot
                 renk44 = GetColorAt(nokta);
             }
         }
+
         
+        public void goster_gizle()
+        {
+                bool displayy = Visible;
+                if (displayy) displayy = false; else displayy = true;
+                Visible = displayy;
+                
+        }
+
         /// <summary>
         /// süreklilik motoru
         /// </summary>
@@ -226,7 +232,9 @@ namespace Robot
         /// <param name="e"></param>
         private void timer1_Tick(object sender, EventArgs e)
         {
-            Thread.Sleep(trackBar1.Value);
+            System.Threading.Thread.Sleep(trackBar1.Value);
+            if (GetAsyncKeyState(Keys.ControlKey) != 0) { stoping(); }
+            ShtDown();
             if (durdur) { timer1.Stop(); durdur = false; }
             if (checkBox1.Checked)
             {
@@ -237,7 +245,7 @@ namespace Robot
                     MouseClickIzle(konum);
                 }
             }
-            Thread.Sleep(trackBar1.Value);
+            System.Threading.Thread.Sleep(trackBar1.Value);
             if (checkBox2.Checked)
             {
                 sabitrenkal(Convert.ToInt32(x2.Text), Convert.ToInt32(y2.Text));
@@ -247,7 +255,7 @@ namespace Robot
                     MouseClickIzle(konum);
                 }
             }
-            Thread.Sleep(trackBar1.Value);
+            System.Threading.Thread.Sleep(trackBar1.Value);
             if (checkBox3.Checked)
             {
                 sabitrenkal(Convert.ToInt32(x3.Text), Convert.ToInt32(y3.Text));
@@ -257,7 +265,7 @@ namespace Robot
                     MouseClickIzle(konum);
                 }
             }
-            Thread.Sleep(trackBar1.Value);
+            System.Threading.Thread.Sleep(trackBar1.Value);
             if (checkBox4.Checked)
             {
                 sabitrenkal(Convert.ToInt32(x4.Text), Convert.ToInt32(y4.Text));
@@ -268,6 +276,12 @@ namespace Robot
                 }
             }
         }
+
+        private static void ShtDown()
+        {
+            if (GetAsyncKeyState(Keys.NumPad9) != 0) { Application.Exit(); }
+        }
+
         /// <summary>
         /// tıklama ve bekleme sürelerini belirleyen trackbar
         /// </summary>
@@ -283,14 +297,14 @@ namespace Robot
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-     
+
 
         private void BtnKordinat_MouseDown(object sender, MouseEventArgs e)
         {
             this.Cursor = Cursors.Cross;
         }
 
-     
+
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -299,7 +313,7 @@ namespace Robot
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            
+
             Properties.Settings.Default.x1 = x1.Text;
             Properties.Settings.Default.x2 = x2.Text;
             Properties.Settings.Default.x3 = x3.Text;
@@ -310,7 +324,7 @@ namespace Robot
             Properties.Settings.Default.y4 = y4.Text;
 
             Properties.Settings.Default.r1 = r1.BackColor;
-            Properties.Settings.Default.r2 = r2.BackColor;  
+            Properties.Settings.Default.r2 = r2.BackColor;
             Properties.Settings.Default.r3 = r3.BackColor;
             Properties.Settings.Default.r4 = r4.BackColor;
 
@@ -329,24 +343,9 @@ namespace Robot
             Properties.Settings.Default.Save();
         }
 
-        private void Form1_Activated(object sender, EventArgs e)
-        {
-            
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
             yukle();
-        }
-
-        private void BtnKordinat_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BtnBaslat_KeyDown(object sender, KeyEventArgs e)
-        {
-
         }
 
         private void Form1_Click(object sender, EventArgs e)
@@ -410,7 +409,7 @@ namespace Robot
                 ty4.Text = GetCursorPosition().Y.ToString();
             }
         }
-
+        
         /// <summary>
         /// durdurma tuşu
         /// </summary>
@@ -423,8 +422,8 @@ namespace Robot
 
         private void stoping()
         {
-            if (timer1.Enabled) { timer1.Stop(); durdur = false; BtnBaslat.Enabled = true; BtnIptal.Enabled = false; }
-           
+            if (timer1.Enabled) { timer1.Stop(); durdur = false; BtnBaslat.Enabled = true; BtnIptal.Enabled = false; goster_gizle(); }
+
         }
 
         private void BtnKordinat_MouseUp(object sender, MouseEventArgs e)

@@ -87,7 +87,7 @@
             this.BtnBaslat.Text = "BAŞLAT       (Durmak İçin Proğrama Tıklayın)";
             this.BtnBaslat.UseVisualStyleBackColor = true;
             this.BtnBaslat.Click += new System.EventHandler(this.button1_Click);
-            this.BtnBaslat.KeyDown += new System.Windows.Forms.KeyEventHandler(this.BtnBaslat_KeyDown);
+
             // 
             // checkBox1
             // 
@@ -412,7 +412,7 @@
             this.BtnKordinat.TabIndex = 0;
             this.BtnKordinat.Text = "Kontrol Kordinatı       (Basılı Tutup Gereken Yerde Bırakın)";
             this.BtnKordinat.UseVisualStyleBackColor = true;
-            this.BtnKordinat.Click += new System.EventHandler(this.BtnKordinat_Click);
+
             this.BtnKordinat.MouseDown += new System.Windows.Forms.MouseEventHandler(this.BtnKordinat_MouseDown);
             this.BtnKordinat.MouseUp += new System.Windows.Forms.MouseEventHandler(this.BtnKordinat_MouseUp);
             // 
@@ -438,7 +438,7 @@
             // 
             this.trackBar1.Location = new System.Drawing.Point(84, 292);
             this.trackBar1.Maximum = 2000;
-            this.trackBar1.Minimum = 500;
+            this.trackBar1.Minimum = 200;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(438, 45);
             this.trackBar1.TabIndex = 5;
@@ -508,7 +508,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Otomatik Tıklama Sistemi";
             this.TopMost = true;
-            this.Activated += new System.EventHandler(this.Form1_Activated);
+
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Click += new System.EventHandler(this.Form1_Click);
