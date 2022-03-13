@@ -1,4 +1,8 @@
 # Robot
++ Sol CTRL Tuşuna Durdurma Eklendi
++ Numpad 9 tuşuna proğramdan çıkış eklendi.
+
+
 her aktif kutusu birbirinden bağımsız şekilde çalışır ve bu her birime tek tek kordinat ve renk ataması yapılmalıdır.
 renk ve kordinat atamaları bir aktif yapıp ardından kontol bağlantı basılı tutularak renk kontrolü yapılacağı yerde bırakılır.
 devamında tıklanması istenen yer için tıklanacak kordinat basılı tutularak gereken yerde bırakılır.
