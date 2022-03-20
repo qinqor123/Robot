@@ -3,6 +3,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Text;
+using System.IO;
 
 namespace Robot
 {
@@ -76,34 +78,37 @@ namespace Robot
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+            WriteINI("Kontol", "x1", x1.Text);
+            WriteINI("Kontol", "x2", x2.Text);
+            WriteINI("Kontol", "x3", x3.Text);
+            WriteINI("Kontol", "x4", x4.Text);
+            WriteINI("Kontol", "y1", y1.Text);
+            WriteINI("Kontol", "y2", y2.Text);
+            WriteINI("Kontol", "y3", y3.Text);
+            WriteINI("Kontol", "y4", y4.Text);
+            WriteINI("Renkler", "r1r", r1.BackColor.R.ToString());
+            WriteINI("Renkler", "r1g", r1.BackColor.G.ToString());
+            WriteINI("Renkler", "r1b", r1.BackColor.B.ToString());
+            WriteINI("Renkler", "r2r", r2.BackColor.R.ToString());
+            WriteINI("Renkler", "r2g", r2.BackColor.G.ToString());
+            WriteINI("Renkler", "r2b", r2.BackColor.B.ToString());
+            WriteINI("Renkler", "r3r", r3.BackColor.R.ToString());
+            WriteINI("Renkler", "r3g", r3.BackColor.G.ToString());
+            WriteINI("Renkler", "r3b", r3.BackColor.B.ToString());
+            WriteINI("Renkler", "r4r", r4.BackColor.R.ToString());
+            WriteINI("Renkler", "r4g", r4.BackColor.G.ToString());
+            WriteINI("Renkler", "r4b", r4.BackColor.B.ToString());
 
-            Properties.Settings.Default.x1 = x1.Text;
-            Properties.Settings.Default.x2 = x2.Text;
-            Properties.Settings.Default.x3 = x3.Text;
-            Properties.Settings.Default.x4 = x4.Text;
-            Properties.Settings.Default.y1 = y1.Text;
-            Properties.Settings.Default.y2 = y2.Text;
-            Properties.Settings.Default.y3 = y3.Text;
-            Properties.Settings.Default.y4 = y4.Text;
-
-            Properties.Settings.Default.r1 = r1.BackColor;
-            Properties.Settings.Default.r2 = r2.BackColor;
-            Properties.Settings.Default.r3 = r3.BackColor;
-            Properties.Settings.Default.r4 = r4.BackColor;
-
-
-            Properties.Settings.Default.tx1 = tx1.Text;
-            Properties.Settings.Default.tx2 = tx2.Text;
-            Properties.Settings.Default.tx3 = tx3.Text;
-            Properties.Settings.Default.tx4 = tx4.Text;
-            Properties.Settings.Default.ty1 = ty1.Text;
-            Properties.Settings.Default.ty2 = ty2.Text;
-            Properties.Settings.Default.ty3 = ty3.Text;
-            Properties.Settings.Default.ty4 = ty4.Text;
-
-            Properties.Settings.Default.hiz = trackBar1.Value.ToString();
-
-            Properties.Settings.Default.Save();
+            WriteINI("Tiklama", "tx1", tx1.Text);
+            WriteINI("Tiklama", "tx2", tx2.Text);
+            WriteINI("Tiklama", "tx3", tx3.Text);
+            WriteINI("Tiklama", "tx4", tx4.Text);
+            WriteINI("Tiklama", "ty1", ty1.Text);
+            WriteINI("Tiklama", "ty2", ty2.Text);
+            WriteINI("Tiklama", "ty3", ty3.Text);
+            WriteINI("Tiklama", "ty4", ty4.Text);
+            
+            WriteINI("Hiz", "hizlanma", trackBar1.Value.ToString());
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -347,34 +352,62 @@ namespace Robot
             renkli = Color.FromArgb(255, (2000 - trackBar1.Value) / 8, 125, 125);
             trackBar1.BackColor = renkli;
         }
-
-        private void yukle()
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool WritePrivateProfileString(string lpAppName, string lpKeyName, string lpString, string lpFileName);
+        bool WriteINI(string SectionName, string KeyName, string StringToWrite)
         {
-            x1.Text = Properties.Settings.Default.x1;
-            x2.Text = Properties.Settings.Default.x2;
-            x3.Text = Properties.Settings.Default.x3;
-            x4.Text = Properties.Settings.Default.x4;
-            y1.Text = Properties.Settings.Default.y1;
-            y2.Text = Properties.Settings.Default.y2;
-            y3.Text = Properties.Settings.Default.y3;
-            y4.Text = Properties.Settings.Default.y4;
-            r1.BackColor = Properties.Settings.Default.r1;
-            renk11 = Properties.Settings.Default.r1;
-            r2.BackColor = Properties.Settings.Default.r2;
-            renk22 = Properties.Settings.Default.r2;
-            r3.BackColor = Properties.Settings.Default.r3;
-            renk33 = Properties.Settings.Default.r3;
-            r4.BackColor = Properties.Settings.Default.r4;
-            renk44 = Properties.Settings.Default.r4;
-            tx1.Text = Properties.Settings.Default.tx1;
-            tx2.Text = Properties.Settings.Default.tx2;
-            tx3.Text = Properties.Settings.Default.tx3;
-            tx4.Text = Properties.Settings.Default.tx4;
-            ty1.Text = Properties.Settings.Default.ty1;
-            ty2.Text = Properties.Settings.Default.ty2;
-            ty3.Text = Properties.Settings.Default.ty3;
-            ty4.Text = Properties.Settings.Default.ty4;
-            trackBar1.Value = Convert.ToInt32(Properties.Settings.Default.hiz);
+            bool Return;
+            Return = WritePrivateProfileString(SectionName, KeyName, StringToWrite, Application.StartupPath + @"\Config.ini ");
+            return Return;
+        }
+        [DllImport("kernel32.dll")]
+        static extern uint GetPrivateProfileString(string lpAppName, string lpKeyName, string lpDefault, StringBuilder lpReturnedString, int nSize, string lpFileName);
+
+        private string veriOku(string anabaslik, string altbaslik)
+        {
+            if (File.Exists(Application.StartupPath+@"\Config.ini"))
+            {
+                StringBuilder sb = new StringBuilder(5000);
+                GetPrivateProfileString(anabaslik, altbaslik, "", sb, sb.Capacity, Application.StartupPath + @"\Config.ini ");
+                string alinan = sb.ToString();
+                sb.Clear();
+                return alinan;
+            }
+            else
+            {
+                return "hata";
+            }
+            
+        }
+        private void yukle()
+        {            
+            x1.Text = veriOku("Kontol", "x1");
+            x2.Text = veriOku("Kontol", "x2");
+            x3.Text = veriOku("Kontol", "x3");
+            x4.Text = veriOku("Kontol", "x4");
+            y1.Text = veriOku("Kontol", "y1");
+            y2.Text = veriOku("Kontol", "y2");
+            y3.Text = veriOku("Kontol", "y3");
+            y4.Text = veriOku("Kontol", "y4");
+
+            r1.BackColor = Color.FromArgb(Convert.ToInt32(veriOku("Renkler", "r1r")), Convert.ToInt32(veriOku("Renkler", "r1g")), Convert.ToInt32(veriOku("Renkler", "r1b")));
+            renk11 = r1.BackColor;
+            r2.BackColor = Color.FromArgb(Convert.ToInt32(veriOku("Renkler", "r2r")), Convert.ToInt32(veriOku("Renkler", "r2g")), Convert.ToInt32(veriOku("Renkler", "r2b")));
+            renk22 = r2.BackColor;
+            r3.BackColor = Color.FromArgb(Convert.ToInt32(veriOku("Renkler", "r3r")), Convert.ToInt32(veriOku("Renkler", "r3g")), Convert.ToInt32(veriOku("Renkler", "r3b")));
+            renk33 = r3.BackColor;
+            r4.BackColor = Color.FromArgb(Convert.ToInt32(veriOku("Renkler", "r4r")), Convert.ToInt32(veriOku("Renkler", "r4g")), Convert.ToInt32(veriOku("Renkler", "r4b")));
+            renk44 = r4.BackColor;
+            tx1.Text = veriOku("Tiklama", "tx1");
+            tx2.Text = veriOku("Tiklama", "tx2");
+            tx3.Text = veriOku("Tiklama", "tx3");
+            tx4.Text = veriOku("Tiklama", "tx4");
+            ty1.Text = veriOku("Tiklama", "ty1");
+            ty2.Text = veriOku("Tiklama", "ty2");
+            ty3.Text = veriOku("Tiklama", "ty3");
+            ty4.Text = veriOku("Tiklama", "ty4");
+            trackBar1.Value = Convert.ToInt32(veriOku("Hiz", "hizlanma"));
             label1.Text = trackBar1.Value.ToString();
         }
 
