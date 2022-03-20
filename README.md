@@ -1,4 +1,5 @@
 # Robot
++ ini dosyası kodlaması yapıldı yapılan kayıtların bilgisayara özel değil genel olması sağlandı.
 + Sol CTRL Tuşuna Durdurma Eklendi
 + Numpad 9 tuşuna proğramdan çıkış Eklendi.
 + Numpad 1 Renk ve Renk Kordinatı alma Eklendi
